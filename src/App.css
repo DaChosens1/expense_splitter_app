@@ -1,38 +1,139 @@
-.App {
+/* App.css */
+
+/* Typography and base layout */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  padding: 20px;
+}
+
+/* Reusable inputs */
+.input,
+.select {
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Button styles */
+.button {
+  padding: 8px 14px;
+  margin: 8px 4px 8px 0;
+  font-size: 14px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
+
+.button.red {
+  background-color: #d9534f;
+}
+
+.button.red:hover {
+  background-color: #c9302c;
+}
+
+.button.gray {
+  background-color: #6c757d;
+}
+
+.button.gray:hover {
+  background-color: #5a6268;
+}
+
+/* List items */
+.participant-list,
+.expense-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.participant-item,
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f4f4f9;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Modal overlay */
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal content */
+.confirm-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.confirm-modal p {
+  margin-bottom: 20px;
+  line-height: 1.5;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* App.css additions */
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.app-title {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 30px;
+  color: #2c3e50;
 }
 
-.App-link {
-  color: #61dafb;
+/* Group card styling (HomePage) */
+
+.group-card {
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.group-card:hover {
+  background-color: #eef6ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }

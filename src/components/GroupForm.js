@@ -12,7 +12,6 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     return { id: null, name: '', participants: [], expenses: [] };
   });
 
-  // Temp state for adding participant name and expense inputs
   const [newParticipantName, setNewParticipantName] = useState('');
   const [newExpense, setNewExpense] = useState({
     name: '',
@@ -20,37 +19,28 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     paidBy: '',
     participants: [],
   });
-
-  // State for confirm participant deletion modal
   const [confirmDeleteParticipant, setConfirmDeleteParticipant] = useState(null);
 
-  // Helper to update group name
   const updateGroupName = (name) => {
     setGroup((g) => ({ ...g, name }));
   };
 
-  // Add a participant to group
   const addParticipant = () => {
     const name = newParticipantName.trim();
     if (!name || group.participants.includes(name)) return;
-
     setGroup((g) => ({
       ...g,
       participants: [...g.participants, name],
     }));
-
     setNewParticipantName('');
   };
 
-  // Check if participant is involved in any expense
   const participantInExpenses = (name) => {
     return group.expenses.some(
-      (exp) =>
-        exp.paidBy === name || exp.participants.includes(name)
+      (exp) => exp.paidBy === name || exp.participants.includes(name)
     );
   };
 
-  // Initiate participant delete with confirmation if needed
   const tryDeleteParticipant = (nameToDelete) => {
     if (participantInExpenses(nameToDelete)) {
       setConfirmDeleteParticipant(nameToDelete);
@@ -59,7 +49,6 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     }
   };
 
-  // Confirm participant deletion after warning
   const confirmDelete = () => {
     if (confirmDeleteParticipant) {
       deleteParticipant(confirmDeleteParticipant);
@@ -67,27 +56,21 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     }
   };
 
-  // Cancel participant deletion confirmation
   const cancelDelete = () => {
     setConfirmDeleteParticipant(null);
   };
 
-  // Delete participant and clean up expenses accordingly
   const deleteParticipant = (nameToDelete) => {
     setGroup((g) => {
       const newParticipants = g.participants.filter((p) => p !== nameToDelete);
-
-      // Remove participant from expenses and adjust payer if needed
       const newExpenses = g.expenses
         .map((exp) => {
-          const filteredParticipants = exp.participants.filter(
-            (p) => p !== nameToDelete
-          );
+          const filteredParticipants = exp.participants.filter((p) => p !== nameToDelete);
           let newPaidBy =
             exp.paidBy === nameToDelete ? filteredParticipants[0] || '' : exp.paidBy;
           return { ...exp, participants: filteredParticipants, paidBy: newPaidBy };
         })
-        .filter((exp) => exp.participants.length > 0); // remove expenses with no participants
+        .filter((exp) => exp.participants.length > 0);
 
       return {
         ...g,
@@ -96,7 +79,6 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
       };
     });
 
-    // Clear selected expense participants if deleted
     if (newExpense.paidBy === nameToDelete) {
       setNewExpense((e) => ({ ...e, paidBy: '' }));
     }
@@ -108,7 +90,6 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     }
   };
 
-  // Delete expense by name
   const deleteExpense = (expenseName) => {
     setGroup((g) => ({
       ...g,
@@ -116,12 +97,10 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     }));
   };
 
-  // Update new expense input fields
   const updateNewExpenseField = (field, value) => {
     setNewExpense((e) => ({ ...e, [field]: value }));
   };
 
-  // Toggle participants in new expense participants list
   const toggleExpenseParticipant = (participant) => {
     setNewExpense((e) => {
       const exists = e.participants.includes(participant);
@@ -132,15 +111,11 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     });
   };
 
-  // Check if expense name is unique within the group
   const isExpenseNameUnique = (name) => {
     const lowerName = name.trim().toLowerCase();
-    return !group.expenses.some(
-      (exp) => exp.name.toLowerCase() === lowerName
-    );
+    return !group.expenses.some((exp) => exp.name.toLowerCase() === lowerName);
   };
 
-  // Add the new expense to group.expenses
   const addExpense = () => {
     const amountNum = parseFloat(newExpense.amount);
     const trimmedExpenseName = newExpense.name.trim();
@@ -172,11 +147,9 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
       expenses: [...g.expenses, expenseToAdd],
     }));
 
-    // reset new expense inputs
     setNewExpense({ name: '', amount: '', paidBy: '', participants: [] });
   };
 
-  // Save group: add new or update existing
   const handleSave = () => {
     const trimmedName = group.name.trim();
     if (!trimmedName || group.participants.length === 0) return;
@@ -184,14 +157,13 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     if (mode === 'add') {
       const newId = groups.length > 0 ? Math.max(...groups.map((g) => g.id)) + 1 : 1;
       setGroups([...groups, { ...group, id: newId }]);
-      setPage({ name: 'home' }); // after add, go home
+      setPage({ name: 'home' });
     } else if (mode === 'edit' && group.id != null) {
       setGroups(groups.map((g) => (g.id === group.id ? group : g)));
-      setPage({ name: 'view', groupId: group.id }); // after edit, go to view group
+      setPage({ name: 'view', groupId: group.id });
     }
   };
 
-  // Disabled logic for save button
   const trimmedGroupName = group.name.trim();
   const groupNameTaken = groups.some(
     (g) => g.name.toLowerCase() === trimmedGroupName.toLowerCase() && g.id !== group.id
@@ -200,7 +172,6 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
   const saveDisabled =
     trimmedGroupName === '' || group.participants.length === 0 || groupNameTaken;
 
-  // Disabled logic for add expense button
   const trimmedExpenseName = newExpense.name.trim();
   const amountNum = parseFloat(newExpense.amount);
 
@@ -214,41 +185,35 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
     !isExpenseNameUnique(trimmedExpenseName);
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div>
       <h2>{mode === 'add' ? 'Add Group' : 'Edit Group'}</h2>
 
-      {/* group name input */}
       <input
         type="text"
         placeholder="Enter group name"
         value={group.name}
         onChange={(e) => updateGroupName(e.target.value)}
-        style={{ display: 'block', marginBottom: '10px', width: '100%', maxWidth: '400px' }}
+        className="input"
       />
 
-      {/* Participants management (add/delete) */}
-      <div style={{ marginBottom: '20px' }}>
+      <div>
         <h3>Participants</h3>
         <input
           type="text"
           placeholder="Enter participant name"
           value={newParticipantName}
           onChange={(e) => setNewParticipantName(e.target.value)}
-          style={{ marginRight: '10px' }}
+          className="input"
         />
-        <button onClick={addParticipant}>Add Participant</button>
+        <button className="button" onClick={addParticipant}>
+          Add Participant
+        </button>
 
-        <ul>
+        <ul className="participant-list">
           {group.participants.map((p, i) => (
-            <li
-              key={i}
-              style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
-            >
-              <span>{p}</span>
-              <button
-                onClick={() => tryDeleteParticipant(p)}
-                style={{ color: 'red' }}
-              >
+            <li key={i} className="participant-item">
+              {p}
+              <button className="button red" onClick={() => tryDeleteParticipant(p)}>
                 Delete
               </button>
             </li>
@@ -256,8 +221,7 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
         </ul>
       </div>
 
-      {/* Expenses management (add/delete) */}
-      <div style={{ marginBottom: '20px' }}>
+      <div>
         <h3>Expenses</h3>
 
         <input
@@ -265,10 +229,10 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
           placeholder="Expense name"
           value={newExpense.name}
           onChange={(e) => updateNewExpenseField('name', e.target.value)}
-          style={{ marginRight: '10px' }}
+          className="input"
         />
-        {!isExpenseNameUnique(trimmedExpenseName) && trimmedExpenseName !== '' && (
-          <p style={{ color: 'red', marginTop: 0 }}>Expense name already exists!</p>
+        {!isExpenseNameUnique(trimmedExpenseName) && trimmedExpenseName && (
+          <p style={{ color: 'red' }}>Expense name already exists!</p>
         )}
 
         <input
@@ -276,7 +240,7 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
           placeholder="Amount"
           value={newExpense.amount}
           onChange={(e) => updateNewExpenseField('amount', e.target.value)}
-          style={{ marginRight: '10px', width: '100px' }}
+          className="input"
           min="0"
           step="0.01"
         />
@@ -284,7 +248,7 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
         <select
           value={newExpense.paidBy}
           onChange={(e) => updateNewExpenseField('paidBy', e.target.value)}
-          style={{ marginRight: '10px' }}
+          className="select"
         >
           <option value="">Paid By</option>
           {group.participants.map((p, idx) => (
@@ -294,11 +258,7 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
           ))}
         </select>
 
-        {/* Expense participants multi-select */}
-        <div style={{ margin: '10px 0' }}>
-          {group.participants.length === 0 && (
-            <p>Add participants first to assign expense.</p>
-          )}
+        <div>
           {group.participants.map((p, idx) => (
             <label key={idx} style={{ marginRight: '10px' }}>
               <input
@@ -311,29 +271,24 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
           ))}
         </div>
 
-        <button onClick={addExpense} disabled={addExpenseDisabled}>
+        <button className="button" onClick={addExpense} disabled={addExpenseDisabled}>
           Add Expense
         </button>
 
-        {/* List expenses */}
         {group.expenses.length === 0 ? (
           <p>No expenses added yet.</p>
         ) : (
-          <ul>
+          <ul className="expense-list">
             {group.expenses.map((expense, idx) => (
-              <li key={idx} style={{ marginBottom: '10px' }}>
+              <li key={idx} className="expense-item">
                 <strong>{expense.name}</strong> - ${expense.amount.toFixed(2)}
                 <br />
                 Paid by: <em>{expense.paidBy}</em>
                 <br />
-                Shared among: {expense.participants.join(', ')}{' '}
+                Shared among: {expense.participants.join(', ')}
                 <button
+                  className="button red"
                   onClick={() => deleteExpense(expense.name)}
-                  style={{
-                    color: 'red',
-                    marginLeft: '10px',
-                    cursor: 'pointer',
-                  }}
                   title="Delete Expense"
                 >
                   Delete
@@ -344,38 +299,40 @@ function GroupForm({ mode, existingGroup, groups, setGroups, setPage }) {
         )}
       </div>
 
-      {/* Save and Cancel buttons */}
-      <button onClick={handleSave} disabled={saveDisabled}>
+      <button className="button" onClick={handleSave} disabled={saveDisabled}>
         {mode === 'add' ? 'Save Group' : 'Save Changes'}
       </button>
       <button
+        className="button gray"
         onClick={() =>
           setPage(
             mode === 'add' ? { name: 'home' } : { name: 'view', groupId: group.id }
           )
         }
-        style={{ marginLeft: '10px' }}
       >
         Cancel
       </button>
 
-      {/* Confirm Delete Participant Modal */}
       {confirmDeleteParticipant && (
-        <div>
-            <p>
-              Participant <strong>{confirmDeleteParticipant}</strong> is involved in
-              existing expenses. Deleting will remove them from those expenses and
-              may affect your data. Are you sure?
-            </p>
-            <button
-              onClick={confirmDelete}
-              style={{ marginRight: '10px', backgroundColor: 'red', color: 'white' }}
-            >
-              Yes, Delete
-            </button>
-            <button onClick={cancelDelete}>Cancel</button>
-        </div>
-      )}
+  <div className="confirm-modal-overlay">
+    <div className="confirm-modal">
+      <p>
+        Participant <strong>{confirmDeleteParticipant}</strong> is involved in existing expenses.
+        <br />
+        Deleting will remove them from those expenses and may affect your data.
+        <br />
+        Are you sure?
+      </p>
+      <button className="button red" onClick={confirmDelete}>
+        Yes, Delete
+      </button>
+      <button className="button gray" onClick={cancelDelete} style={{ marginLeft: '10px' }}>
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
